@@ -1,0 +1,110 @@
+.layout {
+    height: 100vh;
+    display: flex;
+}
+
+.dashboard {
+    background-color: #C4C4C4;
+    width: 100%;
+    padding: 2rem;
+
+}
+
+.filter {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    
+    & input {
+        background-color: #F3F1F1;
+        padding: 0.7rem 0 0.7rem 1rem;
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+        width: 87%;
+    }
+    & [class*=" ant-dropdown"] {
+        height: 3rem;
+        border: 1px solid black;
+        background-color: #D9D9D9;
+        width: 15%;
+    }
+    & [class*=" ant-dropdown"]:hover {
+        background-color: #bfbebe;
+        border-color: black;
+        color: black;
+    }
+
+}
+
+.search__bar {
+    border: 1px solid black;
+    border-radius: 4px;
+    display: flex;
+    width: 100%;
+}
+
+.search_icon_box {
+    display: flex;
+    background-color: white;
+    align-items: center;
+    width: 13%;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    justify-content: center;
+    cursor: pointer;
+
+    & img {
+        -webkit-transform: scaleX(-1);
+        transform: scaleX(-1);
+        width: 2rem;
+        height: 2rem;
+    }
+}
+
+.content {
+    background-color: #D9D9D9;
+    border-radius: 4px;
+    height: 80%;
+    padding: 1.25rem 2.5rem;
+}
+
+.content_card {
+    border: 1px solid black;
+    border-radius: 4px;
+    padding: 1rem;
+}
+
+.content_icon {
+    width: 1.5rem;
+    margin-right: 0.7rem;
+    opacity: 0.8;
+}
+
+.pagination {
+    text-align: center;
+    margin-top: 1rem;
+    :global {
+        .ant-pagination {
+            .ant-pagination-item-active {
+                border-color: #4200FF;
+                a {
+                    color: #4200FF;
+                }
+            }
+            
+            .ant-pagination-disabled {
+                background-color: #919EAB;
+            }
+
+            li {
+                background-color: #ffffff;
+            }
+
+            .ant-pagination-item:hover{
+                background-color: #ffffff;
+                border-color: #4200FF;
+            }
+
+        }
+    }
+}

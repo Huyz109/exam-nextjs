@@ -20,7 +20,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <ConfigProvider theme={{hashed: false, token: {
           fontFamily: 'inherit',
-          colorPrimary: '#FBBC1A',
+          colorPrimary: 'black',
           fontSize: 16, 
         }
         }}>

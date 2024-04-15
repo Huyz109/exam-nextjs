@@ -1,19 +1,23 @@
 .login {
     font-size: 20px;
     
-    #basic_username {
-        padding: 0 1em;
+    :global {
+        #basic_username {
+            padding: 0 1em;
+        }
+        #basic_password {
+            padding-left: 1rem;
+        } 
+        .ant-input-affix-wrapper >input.ant-input {
+            background: #d9d9d9;
+        }
+
+        .ant-input-suffix {
+            background-color: #d9d9d9;
+            margin: 0;
+        }
     }
-    #basic_password {
-        padding-left: 1rem;
-    } 
-    .ant-input-affix-wrapper >input.ant-input {
-        background: #d9d9d9;
-    }
-    .ant-input-suffix {
-        background-color: #d9d9d9;
-        margin: 0;
-    }
+   
 }
 
 .login__bg {
