@@ -2,8 +2,19 @@ import Image from 'next/image'
 import styles from './sidebar.module.scss'
 import AvatarImg from '../../assets/img/avatar.png'
 import { Button } from 'antd'
+import { getLocalStorage, removeLocalStorage, removeSessionStorage } from '@/utils/storage'
+import { useCookies } from 'next-client-cookies'
+import { useRouter } from 'next/navigation'
 
 export default function SideBar() {
+    const cookies = useCookies();
+    const router = useRouter();
+
+    const logOut = () => {
+        cookies.remove('token');
+        router.push('/login');
+    }
+
     return (
         <div className={styles.sidebar}>
             <div className="info">
@@ -16,7 +27,7 @@ export default function SideBar() {
                 </div>
             </div>
             <div className={styles.sidebar__btn}>
-                <Button type="text" htmlType="submit" className={styles.btn__logout}>
+                <Button type="text" htmlType="submit" className={styles.btn__logout} onClick={logOut}>
                         LOGOUT
                 </Button>
             </div>
