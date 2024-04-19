@@ -5,10 +5,9 @@ import { UserOutlined, UnlockOutlined } from '@ant-design/icons';
 import styles from './login.module.scss'
 import Image from 'next/image';
 import cameraLogo from '../../assets/img/camera-logo.png';
-import { redirect } from 'next/navigation';
 import { loginFunc } from '@/api/login';
 import { showNotiError, showNotiSuccess } from '@/components/Noti/notification';
-import { useCookies } from 'next-client-cookies';
+import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation'
 
 export default function Login() {
@@ -17,14 +16,12 @@ export default function Login() {
         password?: string;
         remember?: string;
     };
-    const cookies = useCookies();
     const router = useRouter()
 
     const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
         const data:any = await loginFunc(values);
-        console.log(data);
         if(data) {
-            cookies.set('token', data.token)
+            Cookies.set('token', data.token)
             showNotiSuccess('Đăng nhập thành công!')
             router.push("/")
         }
@@ -32,6 +29,20 @@ export default function Login() {
             showNotiError('Thông tin đăng nhập không chính xác!')
         }
     };
+
+    const validatePassword = (rule: any, value: string, callback: any) => {
+        const regexPassword = /^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/;
+
+        if(value) {
+            if (value.length < 8) {
+                callback("Your password must be at least 8 characters")
+            }
+            if (!regexPassword.test(value)) {
+              callback("Your password must be at least one number and one character");
+            }
+        }
+      };
+    
 
     return (
       <div className={styles.login}>
@@ -57,7 +68,7 @@ export default function Login() {
 
                 <Form.Item<FieldType>
                     name="password"
-                    rules={[{ required: true, message: 'Please input your Password!' }]}
+                    rules={[{ required: true, message: 'Please input your Password!' }, {validator: validatePassword}]}
                 >
                     <Input.Password placeholder='password' prefix={<UnlockOutlined />} className={styles.input__password}/>
                 </Form.Item>

@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { ConfigProvider } from 'antd'
-import { CookiesProvider } from 'next-client-cookies/server';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -19,16 +18,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-
         <ConfigProvider theme={{hashed: false, token: {
           fontFamily: 'inherit',
           colorPrimary: 'black',
           fontSize: 16, 
         }
         }}>
-          <CookiesProvider>
             {children}
-          </CookiesProvider>
         </ConfigProvider>
       </body>
     </html>

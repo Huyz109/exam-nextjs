@@ -8,7 +8,6 @@ export const loginFunc = async (values: any) => {
                 expiresInMins: 30, // optional, defaults to 60
             })
         })
-    console.log(res);
     if (res.ok) {
         return await res.json();
     }

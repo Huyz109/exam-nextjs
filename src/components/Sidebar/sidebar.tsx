@@ -3,15 +3,14 @@ import styles from './sidebar.module.scss'
 import AvatarImg from '../../assets/img/avatar.png'
 import { Button } from 'antd'
 import { getLocalStorage, removeLocalStorage, removeSessionStorage } from '@/utils/storage'
-import { useCookies } from 'next-client-cookies'
+import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation'
 
 export default function SideBar() {
-    const cookies = useCookies();
     const router = useRouter();
 
     const logOut = () => {
-        cookies.remove('token');
+        Cookies.remove('token');
         router.push('/login');
     }
 

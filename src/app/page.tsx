@@ -8,14 +8,14 @@ import Image from 'next/image';
 import SearchIcon from '@/assets/img/search-icon.png'
 import RingIcon from '@/assets/img/clock-icon.png'
 import RewardIcon from '@/assets/img/reward-icon.png'
-import { getLocalStorage, getSessionStorage } from '@/utils/storage'
 import { redirect } from 'next/navigation';
 import { useCookies } from 'next-client-cookies';
+import Cookies from 'js-cookie';
 
 export default function Home() {
   const cookies = useCookies();
 
-  const isCookies = cookies.get('token');
+  const isCookies = Cookies.get('token');
   if(!isCookies) {
     redirect('/login')
   }
