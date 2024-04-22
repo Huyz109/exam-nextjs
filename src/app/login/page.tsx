@@ -34,12 +34,13 @@ export default function Login() {
         const regexPassword = /^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/;
 
         if(value) {
-            if (value.length < 8) {
+            if (value.length < 7) {
                 callback("Your password must be at least 8 characters")
             }
             if (!regexPassword.test(value)) {
-              callback("Your password must be at least one number and one character");
+                callback("Your password must be at least one number and one character");
             }
+            callback();
         }
       };
     

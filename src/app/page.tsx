@@ -1,19 +1,22 @@
 'use client'
 import SideBar from '@/components/Sidebar/sidebar'
-import { Input, Dropdown, Button, Space, Pagination } from 'antd';
-import type { MenuProps } from 'antd';
-import { DownOutlined, StarOutlined, StarFilled } from '@ant-design/icons';
+import { Input, Dropdown, Button, Space, Pagination, Select } from 'antd';
+import { StarOutlined, StarFilled } from '@ant-design/icons';
+import type { SearchProps } from 'antd/es/input/Search';
 import styles from './dashboard.module.scss'
 import Image from 'next/image';
-import SearchIcon from '@/assets/img/search-icon.png'
 import RingIcon from '@/assets/img/clock-icon.png'
 import RewardIcon from '@/assets/img/reward-icon.png'
-import { redirect } from 'next/navigation';
-import { useCookies } from 'next-client-cookies';
 import Cookies from 'js-cookie';
+import { redirect, useRouter, usePathname, useSearchParams} from 'next/navigation';
+import { useCallback } from 'react';
+import type { PaginationProps } from 'antd';
+
 
 export default function Home() {
-  const cookies = useCookies();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const isCookies = Cookies.get('token');
   if(!isCookies) {
@@ -21,20 +24,11 @@ export default function Home() {
   }
 
   const { Search } = Input;
-  const items: MenuProps['items'] = [
-      {
-        key: '1',
-        label: '1st item',
-      },
-      {
-        key: '2',
-        label: '2nd item',
-      },
-      {
-        key: '3',
-        label: '3rd item',
-      },
-    ];
+  const items = [
+        { value: 'Easy', label: 'Easy' },
+        { value: 'Medium', label: 'Medium' },
+        { value: 'Hard', label: 'Hard' },
+    ]   
   
   const dataContent = [
     {   
@@ -89,25 +83,49 @@ export default function Home() {
     
   const STAR_MAX = 5;
 
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString())
+      if(value) {
+        params.set(name, value)
+      }
+      else {
+        params.delete(name);
+      }
+      return params.toString()
+    },
+    [searchParams]
+  )
+
+  const onSearch: SearchProps['onSearch'] = (value, _e, info) => {
+    router.push(pathname + '?' + createQueryString('search', value))
+
+  };
+
+  const onSelect = (value: string) => {
+    router.push(pathname + '?' + createQueryString('select', value))
+  };
+
+  const onChange: PaginationProps['onChange'] = (page) => {
+    router.push(pathname + '?' + createQueryString('page', page.toString()))
+  };
+
   return (
     <div className={styles.layout}>
             <SideBar />
             <div className={styles.dashboard}>
                 <div className={styles.filter}>
-                    <div className={styles.search__bar}>
-                        <input type='text' placeholder='Search'/>
-                        <div className={styles.search_icon_box}>
-                            <Image src={SearchIcon} alt=''/>
-                        </div>
-                    </div>
-                    <Dropdown menu={{ items }}>
-                        <Button>
-                            <Space>
-                            Difficult
-                            <DownOutlined />
-                            </Space>
-                        </Button>
-                    </Dropdown>
+                    <Search placeholder="Search" 
+                            allowClear 
+                            defaultValue={searchParams.get('search') || ''}
+                            onSearch={onSearch} 
+                            className={styles.search__bar}
+                    />
+                    <Select
+                        onChange={onSelect}
+                        options={items}
+                        value={searchParams.get('select') || "Difficult"}
+                    />
                 </div>
                 <div className={styles.content + ' grid grid-cols-2 gap-10 justify-items-center'}>
                     {dataContent.map(item => {
@@ -128,7 +146,7 @@ export default function Home() {
                     )})}
                 </div>
                 <div className={styles.pagination}>
-                 <Pagination defaultCurrent={1} total={50} />
+                 <Pagination defaultCurrent={Number(searchParams.get('page'))} total={50} onChange={onChange} />
                 </div>
             </div>
         </div>
