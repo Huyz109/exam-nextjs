@@ -22,6 +22,10 @@ export default function Login() {
         const data:any = await loginFunc(values);
         if(data) {
             Cookies.set('token', data.token)
+            if(values.remember) {
+                Cookies.set('username', values.username!)
+                Cookies.set('password', values.password!)
+            }
             showNotiSuccess('Đăng nhập thành công!')
             router.push("/")
         }
@@ -64,14 +68,14 @@ export default function Login() {
                     name="username"
                     rules={[{ required: true, message: 'Please input your Username!' },]}
                 >
-                    <Input prefix={<UserOutlined />} placeholder='username' className={styles.input__text}/>
+                    <Input prefix={<UserOutlined />} placeholder='username' className={styles.input__text} defaultValue={Cookies.get('username') || ''}/>
                 </Form.Item>
 
                 <Form.Item<FieldType>
                     name="password"
                     rules={[{ required: true, message: 'Please input your Password!' }, {validator: validatePassword}]}
                 >
-                    <Input.Password placeholder='password' prefix={<UnlockOutlined />} className={styles.input__password}/>
+                    <Input.Password placeholder='password' prefix={<UnlockOutlined />} className={styles.input__password} defaultValue={Cookies.get('password') || ''}/>
                 </Form.Item>
 
                 <Form.Item<FieldType>

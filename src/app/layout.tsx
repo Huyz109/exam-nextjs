@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { ConfigProvider } from 'antd'
+import { StoreProvider } from '../redux/provider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -24,7 +25,9 @@ export default function RootLayout({
           fontSize: 16, 
         }
         }}>
+          <StoreProvider>
             {children}
+          </StoreProvider>
         </ConfigProvider>
       </body>
     </html>
