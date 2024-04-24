@@ -1,20 +1,28 @@
-import Image from 'next/image'
 import styles from './sidebar.module.scss'
 import AvatarImg from '../../assets/img/avatar.png'
-import { Button, Modal, message, Upload } from 'antd'
+import { Image, Button, Modal, message, Upload } from 'antd'
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
-import type { GetProp, UploadProps } from 'antd';
+import { useEffect, useState } from 'react'
+import type { GetProp, UploadProps, UploadFile } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import { useAppSelector } from '@/redux/hook';
+import { useTranslation } from 'react-i18next';
+
 
 export default function SideBar() {
+    const { t } = useTranslation();
     const router = useRouter();
     const [avatar, setAvatar] = useState<string>();
     const [loading, setLoading] = useState(false);
     const [isOpenModal, setIsOpen] = useState(false);
-
+    const [sideData, setSideData] = useState<any>({});
+    const dataState = useAppSelector(state => state.user);
     type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
+
+    useEffect(() => {
+      setSideData(dataState.data)
+    }, [dataState]);
 
     const logOut = () => {
         Cookies.remove('token');
@@ -25,56 +33,46 @@ export default function SideBar() {
         setIsOpen(true);
     }
 
-    const getBase64 = (img: FileType, callback: (url: string) => void) => {
+    const [previewOpen, setPreviewOpen] = useState(false);
+    const [previewImage, setPreviewImage] = useState('');
+    const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+    const getBase64 = (file: FileType): Promise<string> =>
+      new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.addEventListener('load', () => callback(reader.result as string));
-        reader.readAsDataURL(img);
-      };
-    
-    const beforeUpload = (file: FileType) => {
-        console.log(file);
-        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-        if (!isJpgOrPng) {
-          message.error('You can only upload JPG/PNG file!');
-        }
-        const isLt2M = file.size / 1024 / 1024 < 2;
-        if (!isLt2M) {
-          message.error('Image must smaller than 2MB!');
-        }
-        return isJpgOrPng && isLt2M;
-      };
-
-      const handleChange: UploadProps['onChange'] = (info) => {
-        if (info.file.status === 'uploading') {
-          setLoading(true);
-          return;
-        }
-        if (info.file.status === 'done') {
-          // Get this url from response in real world.
-          getBase64(info.file.originFileObj as FileType, (url: any) => {
-            setLoading(false);
-            setAvatar(url);
-          });
-        }
-      };
-
-      const uploadButton = (
-        <button style={{ border: 0, background: 'none' }} type="button">
-          {loading ? <LoadingOutlined /> : <PlusOutlined />}
-          <div style={{ marginTop: 8 }}>Upload</div>
-        </button>
-      );
-
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = (error) => reject(error);
+      });
+      
+    const handlePreview = async (file: UploadFile) => {
+      if (!file.url && !file.preview) {
+        file.preview = await getBase64(file.originFileObj as FileType);
+      }
+  
+      setPreviewImage(file.url || (file.preview as string));
+      setPreviewOpen(true);
+    };
+  
+    const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) =>
+      setFileList(newFileList);
+  
+    const uploadButton = (
+      <button style={{ border: 0, background: 'none' }} type="button">
+        <PlusOutlined />
+        <div style={{ marginTop: 8 }}>Upload</div>
+      </button>
+    );
     return (
         <>
             <div className={styles.sidebar}>
                 <div className="info">
                     <div className={styles.sidebar__avatar}>
-                        <Image src={AvatarImg} alt='avatar'/>
+                        <img src={''} alt='avatar'/>
                     </div>
                     <div className={styles.user_info}>
-                        <p className="username">User: thanhnh@gmail...</p>
-                        <p className="point">Point: 2488</p>
+                        <p className="username">User: {sideData?.email}</p>
+                        <p className="point">Point: {sideData?.totalPoint}</p>
                     </div>
                 </div>
                 <div className={styles.sidebar__btn}>
@@ -100,16 +98,25 @@ export default function SideBar() {
                 className={styles.modal}
             >
                 <Upload
-                    name="avatar"
-                    listType="picture-circle"
-                    className="avatar-uploader"
-                    showUploadList={false}
-                    action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
-                    beforeUpload={beforeUpload}
-                    onChange    ={handleChange}
+                  action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
+                  listType="picture-circle"
+                  fileList={fileList}
+                  onPreview={handlePreview}
+                  onChange={handleChange}
                 >
-                    {avatar ? <img src={avatar} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+                  {fileList.length >= 8 ? null : uploadButton}
                 </Upload>
+                {previewImage && (
+                  <Image
+                    wrapperStyle={{ display: 'none' }}
+                    preview={{
+                      visible: previewOpen,
+                      onVisibleChange: (visible:any) => setPreviewOpen(visible),
+                      afterOpenChange: (visible: any) => !visible && setPreviewImage(''),
+                    }}
+                    src={previewImage}
+                  />
+                )}
             </Modal>
         </>
     )
