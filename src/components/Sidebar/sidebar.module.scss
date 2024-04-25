@@ -11,11 +11,16 @@
 
 .sidebar__avatar {
     margin: 0.5rem 0 1.5rem;
+    text-align: center;
+
+    :global {
+        .ant-avatar {
+            width: 7rem;
+            height: 7rem;
+        }
+    }
     & img {
         border-radius: 50%;
-        width: 7rem;
-        height: 7rem;
-        margin: 0 auto;
     }
 }
 
@@ -42,8 +47,8 @@
 
 .modal {
     :global {
-        .ant-modal-body {
-            text-align: center;
+        .ant-upload-list {
+            justify-content: center;
         }
     }
 }

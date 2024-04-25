@@ -1,6 +1,6 @@
 import styles from './sidebar.module.scss'
 import AvatarImg from '../../assets/img/avatar.png'
-import { Image, Button, Modal, message, Upload } from 'antd'
+import { Image, Button, Modal, message, Upload, Avatar } from 'antd'
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 export default function SideBar() {
     const { t } = useTranslation();
     const router = useRouter();
-    const [avatar, setAvatar] = useState<string>();
+    const [avatar, setAvatar] = useState<string>('/avatar.png');
     const [loading, setLoading] = useState(false);
     const [isOpenModal, setIsOpen] = useState(false);
     const [sideData, setSideData] = useState<any>({});
@@ -49,26 +49,33 @@ export default function SideBar() {
       if (!file.url && !file.preview) {
         file.preview = await getBase64(file.originFileObj as FileType);
       }
-  
+      
       setPreviewImage(file.url || (file.preview as string));
       setPreviewOpen(true);
     };
   
-    const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) =>
-      setFileList(newFileList);
-  
+    const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) =>  setFileList(newFileList);
+    
     const uploadButton = (
       <button style={{ border: 0, background: 'none' }} type="button">
         <PlusOutlined />
         <div style={{ marginTop: 8 }}>Upload</div>
       </button>
     );
+
+    const handleOk = () => {
+      setAvatar(previewImage);
+      setPreviewImage('');
+      setFileList([]);
+      setIsOpen(!isOpenModal);
+    }
+
     return (
         <>
             <div className={styles.sidebar}>
                 <div className="info">
                     <div className={styles.sidebar__avatar}>
-                        <img src={''} alt='avatar'/>
+                        <Avatar src={avatar}/>
                     </div>
                     <div className={styles.user_info}>
                         <p className="username">User: {sideData?.email}</p>
@@ -87,7 +94,7 @@ export default function SideBar() {
             <Modal
                 open={isOpenModal}
                 title="Upload avatar"
-                // onOk={handleOk}
+                onOk={handleOk}
                 onCancel={() => setIsOpen(false)}
                 footer={(_, { OkBtn, CancelBtn }) => (
                 <>
@@ -103,8 +110,17 @@ export default function SideBar() {
                   fileList={fileList}
                   onPreview={handlePreview}
                   onChange={handleChange}
+                  beforeUpload={file => {
+                    const reader = new FileReader();
+                    const fileUrl = URL.createObjectURL(file);
+                    reader.readAsText(file);
+                    setPreviewImage(fileUrl);
+                    // Prevent upload
+                    return false;
+                }}
+            
                 >
-                  {fileList.length >= 8 ? null : uploadButton}
+                  {fileList.length > 0 ? null : uploadButton}
                 </Upload>
                 {previewImage && (
                   <Image
@@ -112,7 +128,7 @@ export default function SideBar() {
                     preview={{
                       visible: previewOpen,
                       onVisibleChange: (visible:any) => setPreviewOpen(visible),
-                      afterOpenChange: (visible: any) => !visible && setPreviewImage(''),
+                      afterOpenChange: (visible: any) => !visible,
                     }}
                     src={previewImage}
                   />
