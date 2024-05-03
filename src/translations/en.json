@@ -6,7 +6,7 @@
         "login": "Login",
         "loginSuccess": "Login success!",
         "loginInfoNotTrue": "Login information not true!",
-        "passMustBeLeast8": "Your password must be at least 8 characters",
+        "passMustBeLeast7": "Your password must be at least 7 characters",
         "passMustBeNumberAndCharacter": "Your password must be at least one number and one character",
         "userRequired": "Please input your Username!",
         "passRequired": "Please input your Password!"
@@ -42,5 +42,11 @@
         "totalWrongAnswers": "Total wrong answers",
         "points": "Points",
         "dashboard": "Dashboard"
+    },
+    "notification": {
+        "success": "Success",
+        "error": "Error",
+        "info": "Infomation",
+        "warn": "Warning"
     }
 }

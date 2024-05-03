@@ -22,13 +22,14 @@ export default function Home() {
   const t = useTranslations();
   const router = useRouter();
   const pathname = usePathname();
+  const locale = pathname.split('/')[1];
   const searchParams = useSearchParams();
   const [page, setPage] = useState(Number(searchParams.get('page')) || 1);
   const [data, setData] = useState<Array<DataType>>([]);
 
   const isCookies = Cookies.get('token');
   if(!isCookies) {
-    // redirect('/login')
+    redirect(`${locale}/login`)
   }
 
   useEffect(() => {
@@ -94,7 +95,7 @@ export default function Home() {
                   const starFill = Array.from({length: item.difficult}, (v, i) => <StarFilled key={i}/>)
                   const starEmpty = Array.from({length: (STAR_MAX - item.difficult)}, (v, i) => <StarOutlined key={i}/>)
                   return (
-                  <div className={styles.content_card + ' w-10/12'} key={item.id}>
+                  <div className={styles.content_card + ' w-10/12 cursor-pointer'} key={item.id} onClick={() => router.push(`${locale}/exam`)}>
                       <p className='font-medium mb-1'>{item.name}</p>
                       <div className='flex w-full'>
                           <p className='flex text-sm items-center mr-6'><Image src={RingIcon} alt='' className={styles.content_icon}/> {item.time} {t('dashboard.minutes')}</p>

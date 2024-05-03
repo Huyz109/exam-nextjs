@@ -42,5 +42,11 @@
         "totalWrongAnswers": "Số câu trả lời sai",
         "points": "Điểm số",
         "dashboard": "Trang chủ"
+    },
+    "notification": {
+        "success": "Thành công",
+        "error": "Lỗi",
+        "info": "Thông tin",
+        "warn": "Cảnh báo"
     }
 }

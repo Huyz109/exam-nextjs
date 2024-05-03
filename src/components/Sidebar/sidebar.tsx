@@ -2,7 +2,7 @@
 import styles from './sidebar.module.scss'
 import { Image, Button, Modal, message, Upload, Avatar } from 'antd'
 import Cookies from 'js-cookie';
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import type { GetProp, UploadProps, UploadFile } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
@@ -13,6 +13,7 @@ import { useTranslations } from 'next-intl';
 export default function SideBar() {
     const t = useTranslations();
     const router = useRouter();
+    const pathname = usePathname().split('/');
     const [avatar, setAvatar] = useState<string>('/avatar.png');
     const [isOpenModal, setIsOpen] = useState(false);
     const [sideData, setSideData] = useState<any>({});
@@ -25,7 +26,7 @@ export default function SideBar() {
 
     const logOut = () => {
         Cookies.remove('token');
-        router.push('/login');
+        router.push(`${pathname[1]}/login`);
     }
 
     const handleEditAvatar = () => {
@@ -92,7 +93,7 @@ export default function SideBar() {
             </div>
             <Modal
                 open={isOpenModal}
-                title={t('sidebar.upload') + ' avatar'}
+                title={t('sidebar.editAvatar') + ' avatar'}
                 onOk={handleOk}
                 onCancel={() => setIsOpen(false)}
                 footer={(_, { OkBtn, CancelBtn }) => (

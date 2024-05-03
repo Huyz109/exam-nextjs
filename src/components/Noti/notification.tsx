@@ -1,33 +1,33 @@
 import React from 'react';
 import { Button, notification, Space } from 'antd';
 
-export const showNotiSuccess = (descript: string) => {
+export const showNotiSuccess = (message:string, descript: string) => {
     notification.success({
-        message: "Thành công",
+        message: message,
         description: descript,
         placement: 'topRight'
       });
 };
 
-export const showNotInfo = (descript: string) => {
+export const showNotInfo = (message:string, descript: string) => {
   notification.info({
-      message: "Thông tin",
+      message: message,
       description: descript,
       placement: 'topRight'
     });
 };
 
-export const showNotiError = (descript: string) => {
+export const showNotiError = (message:string, descript: string) => {
   notification.error({
-      message: "Lỗi",
+      message: message,
       description: descript,
       placement: 'topRight'
     });
 };
 
-export const showNotiWarning = (descript: string) => {
+export const showNotiWarning = (message:string, descript: string) => {
   notification.warning({
-      message: "Cảnh báo",
+      message: message,
       description: descript,
       placement: 'topRight'
     });
