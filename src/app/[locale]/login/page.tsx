@@ -81,6 +81,7 @@ export default function Login() {
                 autoComplete="off"
                 className={styles.login__form}
                 onFinish={onFinish}
+                form={form}
             >
                 <Form.Item<FieldType>
                     name="username"
