@@ -8,18 +8,6 @@ export const loadStatus = {
   Failed: 3,
 };
 
-// export const getUser = createAsyncThunk(
-//   "/user",
-//   async (params, { rejectWithValue }) => {
-//     try {
-//       const response = await instanceGetRequests('/user');
-//       return response;
-//     } catch (error) {
-//       return rejectWithValue(error);
-//     }
-//   }
-// );
-
 const userSlice = createSlice({
     name: 'user',
     initialState: {
@@ -47,20 +35,6 @@ const userSlice = createSlice({
         state.loadDeleteDataStatus = loadStatus.None;
       },
     },
-    extraReducers: (builder) => {
-      builder
-        // .addCase(getUser.pending, (state, action) => {
-        //   state.loadDataStatus = loadStatus.Loading;
-        // })
-        // .addCase(getUser.fulfilled, (state, action) => {
-        //   state.data = action.payload;
-        //   state.loadDataStatus = loadStatus.Success;
-        // })
-        // .addCase(getUser.rejected, (state, action) => {
-        //   state.data = [];
-        //   state.loadDataStatus = loadStatus.Failed;
-        // }
-    }
 });
 
 const { reducer: userReducer } = userSlice;

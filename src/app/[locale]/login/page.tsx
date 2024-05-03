@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Checkbox, Form, FormProps, Input } from 'antd';
 import { UserOutlined, UnlockOutlined } from '@ant-design/icons';
 import styles from './login.module.scss'
@@ -10,31 +10,47 @@ import { showNotiError, showNotiSuccess } from '@/components/Noti/notification';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl';
+import { useMutation } from '@tanstack/react-query';
+
+type FieldType = {
+    username?: string;
+    password?: string;
+    remember?: string;
+};
 
 export default function Login() {
-    type FieldType = {
-        username?: string;
-        password?: string;
-        remember?: string;
-    };
     const router = useRouter();
     const t = useTranslations();
+    const [form] = Form.useForm();
+    const [values, setValues] = useState<FieldType>({});
 
+    useEffect(() => {
+        let fields = {
+          username: Cookies.get('username') || '',
+          password: Cookies.get('password') || ''
+        };
+        form.setFieldsValue(fields);
+    }, [form]);
 
-    const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
-        const data:any = await loginFunc(values);
-        if(data) {
-            Cookies.set('token', data.token)
+    const loginMutation = useMutation(values => loginFunc(values), {
+        onSuccess: (res) => {
+            Cookies.set('token', res.data.token);
             if(values.remember) {
                 Cookies.set('username', values.username!)
                 Cookies.set('password', values.password!)
             }
-            showNotiSuccess(t('login.loginSuccess'))
-            router.push("/")
-        }
-        else {
-            showNotiError(t('login.loginInfoNotTrue'))
-        }
+            showNotiSuccess(t('notification.success'), t('login.loginSuccess'));
+            router.push("/");
+        },
+        onError: (error) => {
+            console.log(error);
+            showNotiError(t('notification.error'), t('login.loginInfoNotTrue'))
+        },
+    });
+    
+    const onFinish: FormProps<FieldType>['onFinish'] = async (values:any) => {
+        setValues(values);
+        await loginMutation.mutate(values)
     };
 
     const validatePassword = (rule: any, value: string, callback: any) => {
@@ -70,14 +86,14 @@ export default function Login() {
                     name="username"
                     rules={[{ required: true, message: t('login.userRequired') },]}
                 >
-                    <Input prefix={<UserOutlined />} placeholder={t('login.username')} className={styles.input__text} defaultValue={Cookies.get('username') || ''}/>
+                    <Input prefix={<UserOutlined />} placeholder={t('login.username')} className={styles.input__text}/>
                 </Form.Item>
 
                 <Form.Item<FieldType>
                     name="password"
                     rules={[{ required: true, message: t('login.passRequired') }, {validator: validatePassword}]}
                 >
-                    <Input.Password placeholder={t('login.password')} prefix={<UnlockOutlined />} className={styles.input__password} defaultValue={Cookies.get('password') || ''}/>
+                    <Input.Password placeholder={t('login.password')} prefix={<UnlockOutlined />} className={styles.input__password}/>
                 </Form.Item>
 
                 <Form.Item<FieldType>

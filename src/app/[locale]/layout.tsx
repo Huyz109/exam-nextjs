@@ -4,6 +4,7 @@ import './globals.css'
 import { ConfigProvider } from 'antd'
 import { StoreProvider } from '@/redux/provider'
 import {NextIntlClientProvider, useMessages} from 'next-intl';
+import ReactQueryProvider from '@/utils/queryProvider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -24,18 +25,20 @@ export default function RootLayout({
   return (
     <html lang={locale}>
       <body className={inter.className}>
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          <ConfigProvider theme={{hashed: false, token: {
-            fontFamily: 'inherit',
-            colorPrimary: 'black',
-            fontSize: 16, 
-          }
-          }}>
-            <StoreProvider>
-              {children}
-            </StoreProvider>
-          </ConfigProvider>
-        </NextIntlClientProvider>
+        <ReactQueryProvider>
+          <NextIntlClientProvider locale={locale} messages={messages}>
+            <ConfigProvider theme={{hashed: false, token: {
+              fontFamily: 'inherit',
+              colorPrimary: 'black',
+              fontSize: 16, 
+            }
+            }}>
+              <StoreProvider>
+                {children}
+              </StoreProvider>
+            </ConfigProvider>
+          </NextIntlClientProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   )
