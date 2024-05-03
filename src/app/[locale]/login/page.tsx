@@ -4,11 +4,12 @@ import { Button, Checkbox, Form, FormProps, Input } from 'antd';
 import { UserOutlined, UnlockOutlined } from '@ant-design/icons';
 import styles from './login.module.scss'
 import Image from 'next/image';
-import cameraLogo from '../../assets/img/camera-logo.png';
+import cameraLogo from '@/assets/img/camera-logo.png';
 import { loginFunc } from '@/api/login';
 import { showNotiError, showNotiSuccess } from '@/components/Noti/notification';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl';
 
 export default function Login() {
     type FieldType = {
@@ -16,7 +17,9 @@ export default function Login() {
         password?: string;
         remember?: string;
     };
-    const router = useRouter()
+    const router = useRouter();
+    const t = useTranslations();
+
 
     const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
         const data:any = await loginFunc(values);
@@ -26,11 +29,11 @@ export default function Login() {
                 Cookies.set('username', values.username!)
                 Cookies.set('password', values.password!)
             }
-            showNotiSuccess('Đăng nhập thành công!')
+            showNotiSuccess(t('login.loginSuccess'))
             router.push("/")
         }
         else {
-            showNotiError('Thông tin đăng nhập không chính xác!')
+            showNotiError(t('login.loginInfoNotTrue'))
         }
     };
 
@@ -39,16 +42,15 @@ export default function Login() {
 
         if(value) {
             if (value.length < 7) {
-                callback("Your password must be at least 8 characters")
+                callback(t('login.passMustBeLeast7'))
             }
             if (!regexPassword.test(value)) {
-                callback("Your password must be at least one number and one character");
+                callback(t('login.passMustBeNumberAndCharacter'));
             }
             callback();
         }
       };
     
-
     return (
       <div className={styles.login}>
         <div className={styles.login__bg}/>
@@ -66,16 +68,16 @@ export default function Login() {
             >
                 <Form.Item<FieldType>
                     name="username"
-                    rules={[{ required: true, message: 'Please input your Username!' },]}
+                    rules={[{ required: true, message: t('login.userRequired') },]}
                 >
-                    <Input prefix={<UserOutlined />} placeholder='username' className={styles.input__text} defaultValue={Cookies.get('username') || ''}/>
+                    <Input prefix={<UserOutlined />} placeholder={t('login.username')} className={styles.input__text} defaultValue={Cookies.get('username') || ''}/>
                 </Form.Item>
 
                 <Form.Item<FieldType>
                     name="password"
-                    rules={[{ required: true, message: 'Please input your Password!' }, {validator: validatePassword}]}
+                    rules={[{ required: true, message: t('login.passRequired') }, {validator: validatePassword}]}
                 >
-                    <Input.Password placeholder='password' prefix={<UnlockOutlined />} className={styles.input__password} defaultValue={Cookies.get('password') || ''}/>
+                    <Input.Password placeholder={t('login.password')} prefix={<UnlockOutlined />} className={styles.input__password} defaultValue={Cookies.get('password') || ''}/>
                 </Form.Item>
 
                 <Form.Item<FieldType>
@@ -83,11 +85,11 @@ export default function Login() {
                     valuePropName="checked"
                     wrapperCol={{ span: 16 }}
                 >
-                    <Checkbox>Remember me</Checkbox>
+                    <Checkbox>{t('login.remember')}</Checkbox>
                 </Form.Item>
 
-                <Button type="text" htmlType="submit" className={styles.btn__login}>
-                    LOGIN
+                <Button type="text" htmlType="submit" className={styles.btn__login + ' uppercase'}>
+                    {t('login.login')}
                 </Button>
             </Form>
         </div>

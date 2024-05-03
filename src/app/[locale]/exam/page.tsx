@@ -1,10 +1,16 @@
 'use client'
 import { Input, Button, Checkbox } from 'antd';
 import styles from './exam.module.scss'
+import { useTranslations } from 'next-intl';
+import { usePathname, useRouter } from 'next/navigation';
 
 
 export default function Exam() {
     const { Search } = Input;
+    const t = useTranslations();
+    const router = useRouter();
+    const pathname = usePathname().split('/');
+
     const dataContent = {
             id: 3,
             question: "Nhân viên chính thức của công ty Amela được nghỉ phép (có hưởng lương) bao nhiêu ngày một năm?",
@@ -40,14 +46,14 @@ export default function Exam() {
             <div className={styles.container + ' col-span-9 grid grid-rows-6'}>
                 <header className={styles.header + ' row-span-1'}>
                     <p className={styles.header_title + ' font-bold mb-2'}>Kiểm tra an toàn bảo mật thông tin lần 2</p>
-                    <p className='mb-1'>Còn lại: 14 phút 22 giây</p>
+                    <p className='mb-1'>{t('exam.timeLeft')}: 14 {t('exam.minutes')} 22 {t('exam.seconds')}</p>
                     <div className={styles.time_bar}>
                         <div className={styles.time_left}></div>
                     </div>
                 </header>
                 <div className={styles.content + ' row-span-5'}>
                     <div className={styles.question_box}>
-                        <p className='font-bold mb-7'>Câu {dataContent.id}. {dataContent.question}</p>
+                        <p className='font-bold mb-7'>{t('exam.question')} {dataContent.id}. {dataContent.question}</p>
                         <div className={styles.answer_list}>
                             {dataContent.answers.map((answer, index) => <div key={index} className={styles.answer}>
                                 <Checkbox />{String.fromCharCode(index+65)}. {answer}
@@ -55,8 +61,8 @@ export default function Exam() {
                         </div>
                     </div>
                     <div className={styles.btn_list + ' flex '}>
-                        <Button className={styles.btn_pre}>Câu trước</Button>
-                        <Button className={styles.btn_next}>Câu sau</Button>
+                        <Button className={styles.btn_pre}>{t('exam.backQuestion')}</Button>
+                        <Button className={styles.btn_next}>{t('exam.nextQuestion')}</Button>
                     </div>
                 </div>
             </div>
@@ -65,7 +71,7 @@ export default function Exam() {
                     {questionList}
                 </div>
                 <div className={styles.btn_box}>
-                    <Button className={styles.btn_submit}>Nộp bài</Button>
+                    <Button className={styles.btn_submit} onClick={() => router.push(`/${pathname[1]}/exam/finish`)}>{t('exam.submit')}</Button>
                 </div>
             </div>
         </div>

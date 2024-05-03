@@ -1,5 +1,5 @@
+'use client'
 import styles from './sidebar.module.scss'
-import AvatarImg from '../../assets/img/avatar.png'
 import { Image, Button, Modal, message, Upload, Avatar } from 'antd'
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation'
@@ -7,14 +7,13 @@ import { useEffect, useState } from 'react'
 import type { GetProp, UploadProps, UploadFile } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { useAppSelector } from '@/redux/hook';
-import { useTranslation } from 'react-i18next';
+import { useTranslations } from 'next-intl';
 
 
 export default function SideBar() {
-    const { t } = useTranslation();
+    const t = useTranslations();
     const router = useRouter();
     const [avatar, setAvatar] = useState<string>('/avatar.png');
-    const [loading, setLoading] = useState(false);
     const [isOpenModal, setIsOpen] = useState(false);
     const [sideData, setSideData] = useState<any>({});
     const dataState = useAppSelector(state => state.user);
@@ -59,7 +58,7 @@ export default function SideBar() {
     const uploadButton = (
       <button style={{ border: 0, background: 'none' }} type="button">
         <PlusOutlined />
-        <div style={{ marginTop: 8 }}>Upload</div>
+        <div style={{ marginTop: 8 }}>{t('sidebar.upload')}</div>
       </button>
     );
 
@@ -78,30 +77,31 @@ export default function SideBar() {
                         <Avatar src={avatar}/>
                     </div>
                     <div className={styles.user_info}>
-                        <p className="username">User: {sideData?.email}</p>
-                        <p className="point">Point: {sideData?.totalPoint}</p>
+                        <p className="username">{t('sidebar.user')}: {sideData?.email}</p>
+                        <p className="point">{t('sidebar.point')}: {sideData?.totalPoint}</p>
                     </div>
                 </div>
                 <div className={styles.sidebar__btn}>
-                    <Button type="text" className={styles.btn__logout} onClick={handleEditAvatar}>
-                            EDIT
+                    <Button type="text" className={styles.btn__logout + ' uppercase'} onClick={handleEditAvatar}>
+                        {t('sidebar.editAvatar')}
                     </Button>
-                    <Button type="text" htmlType="submit" className={styles.btn__logout + ' mt-5'} onClick={logOut}>
-                            LOGOUT
+                    <Button type="text" htmlType="submit" className={styles.btn__logout + ' mt-5 uppercase'} onClick={logOut}>
+                        {t('sidebar.logout')} 
                     </Button>
                 </div>
             </div>
             <Modal
                 open={isOpenModal}
-                title="Upload avatar"
+                title={t('sidebar.upload') + ' avatar'}
                 onOk={handleOk}
                 onCancel={() => setIsOpen(false)}
                 footer={(_, { OkBtn, CancelBtn }) => (
                 <>
-                    <CancelBtn />
+                    <CancelBtn/>
                     <OkBtn />
                 </>
                 )}
+                cancelText={t('sidebar.cancel')}
                 className={styles.modal}
             >
                 <Upload
@@ -118,7 +118,6 @@ export default function SideBar() {
                     // Prevent upload
                     return false;
                 }}
-            
                 >
                   {fileList.length > 0 ? null : uploadButton}
                 </Upload>
